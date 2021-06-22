@@ -5,6 +5,7 @@ import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventory;
 import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventoryBuilder;
 import com.wizardlybump17.wlib.item.Item;
 import com.wizardlybump17.wlib.item.WMaterial;
+import com.wizardlybump17.wlib.util.ListUtil;
 import lombok.Data;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -57,16 +58,20 @@ public class Market {
                                 .build(),
                         '#'))
                 .content(categories.stream()
-                        .map(category -> new ItemButton(
-                                Item.builder()
-                                        .type(Material.CHEST)
-                                        .displayName("§a" + category.getCategory().getName())
-                                        .lore("§7" + category.getItems().size() + " items")
-                                        .build(),
-                                event -> {
-                                    if (category.getInventory() != null)
-                                        category.getInventory().show(event.getWhoClicked(), 0);
-                                }))
+                        .map(category -> {
+                            ItemButton.ClickAction action = event -> {
+                                if (category.getInventory() != null)
+                                    category.getInventory().show(event.getWhoClicked(), 0);
+                            };
+                            Item.ItemBuilder builder = Item.fromItemStack(category.getCategory().getIcon());
+                            return new ItemButton(
+                                    builder
+                                            .type(builder.getType() == null ? Material.CHEST : builder.getType())
+                                            .lore(builder.getLore() == null ? null : new ListUtil(builder.getLore()).replace("{items}", Integer.toString(category.getItems().size())).getList())
+                                            .build(),
+                                    action
+                            );
+                        })
                         .collect(Collectors.toList()))
                 .build();
     }

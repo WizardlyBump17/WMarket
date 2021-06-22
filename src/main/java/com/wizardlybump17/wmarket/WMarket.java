@@ -1,5 +1,6 @@
 package com.wizardlybump17.wmarket;
 
+import com.wizardlybump17.wlib.item.Item;
 import com.wizardlybump17.wmarket.api.filter.Filter;
 import com.wizardlybump17.wmarket.api.market.Category;
 import com.wizardlybump17.wmarket.api.market.Market;
@@ -42,7 +43,11 @@ public class WMarket extends JavaPlugin {
                 filterData.forEach((type, checker) -> filters.add(new ItemFilter(type, checker)));
             }
 
-            categories.add(new MarketCategory(new Category(data.get("name").toString(), filters), new ArrayList<>()));
+            categories.add(new MarketCategory(new Category(
+                    data.get("name").toString(),
+                    filters, 
+                    data.containsKey("icon") ? Item.deserialize((Map<String, Object>) data.get("icon")).build() : null),
+                    new ArrayList<>()));
         }
 
         market = new Market(categories);

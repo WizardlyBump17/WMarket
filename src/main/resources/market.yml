@@ -3,9 +3,39 @@ market:
     - name: 'swords'
       filters:
         - type: '*SWORD*'
+      icon:
+        material: DIAMOND_SWORD
+        display-name: '&4Swords'
+        lore:
+          - ''
+          - '&7  No time to build your own sword?  '
+          - '&7  You came to the right place!'
+          - '&7  Here you will find some swords'
+          - '&7  to help you in your fight!'
+          - ''
+          - ' &eCurrent amount of swords: &f{items}'
     - name: 'pickaxes'
       filters:
         - type: '*PICKAXE*'
+      icon:
+        material: DIAMOND_PICKAXE
+        display-name: '&cPickaxes'
+        lore:
+          - ''
+          - '&7  No worry about your broken pickaxe,  '
+          - '&7  here you can find good ones!'
+          - ''
+          - ' &eCurrent good pickaxes: &f{items}'
     - name: 'axes'
       filters:
         - type: '*_AXE'
+      icon:
+        material: DIAMOND_AXE
+        display-name: '&eAxes'
+        lore:
+          - ''
+          - '&7  Break wood with hands is hard...  '
+          - '&7  For this reason, some players'
+          - '&7  are selling axes to help you!'
+          - ''
+          - ' &eThe axes: &f{items} axes'
