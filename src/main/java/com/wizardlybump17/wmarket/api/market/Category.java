@@ -1,6 +1,6 @@
-package com.wizardlybump17.market.api.market;
+package com.wizardlybump17.wmarket.api.market;
 
-import com.wizardlybump17.market.api.filter.Filter;
+import com.wizardlybump17.wmarket.api.filter.Filter;
 import lombok.Data;
 
 import java.util.List;

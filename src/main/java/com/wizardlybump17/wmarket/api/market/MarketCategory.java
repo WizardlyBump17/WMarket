@@ -1,6 +1,6 @@
-package com.wizardlybump17.market.api.market;
+package com.wizardlybump17.wmarket.api.market;
 
-import com.wizardlybump17.market.api.filter.Filter;
+import com.wizardlybump17.wmarket.api.filter.Filter;
 import com.wizardlybump17.wlib.inventory.item.ItemButton;
 import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventory;
 import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventoryBuilder;
@@ -10,32 +10,43 @@ import lombok.Data;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public class Market {
+public class MarketCategory {
 
-    private final Set<MarketCategory> categories;
+    private final Category category;
+    private final List<ItemStack> items;
 
     private PaginatedInventory inventory;
 
-    public void publish(ItemStack item) {
-        categoryFor: for (MarketCategory marketCategory : categories) {
-            Category category = marketCategory.getCategory();
-            for (Filter filter : category.getFilters()) {
-                if (filter.accept(item)) {
-                    marketCategory.addItem(item);
-                    updateInventory();
-                    break categoryFor;
-                }
-            }
-        }
+    public List<ItemStack> getItems() {
+        return new ArrayList<>(items);
     }
 
-    void updateInventory() {
+    public boolean addItem(ItemStack item) {
+        for (Filter filter : category.getFilters())
+            if (!filter.accept(item))
+                return false;
+        items.add(item);
+        updateInventory();
+        return true;
+    }
+
+    public void removeItem(ItemStack item) {
+        items.remove(item);
+        updateInventory();
+    }
+
+    public boolean hasItem(ItemStack item) {
+        return items.contains(item);
+    }
+
+    private void updateInventory() {
         inventory = new PaginatedInventoryBuilder()
-                .title("Market")
+                .title(category.getName())
                 .shape("#########" +
                         "#xxxxxxx#" +
                         "#xxxxxxx#" +
@@ -61,14 +72,10 @@ public class Market {
                                 .displayName("§aPrevious page")
                                 .build(),
                         '#'))
-                .content(categories.stream()
-                        .map(category -> new ItemButton(
-                                Item.builder()
-                                        .type(Material.CHEST)
-                                        .displayName("§a" + category.getCategory().getName())
-                                        .lore("§7" + category.getItems().size() + " items")
-                                        .build(),
-                                event -> category.getInventory().show(event.getWhoClicked(), 0)))
+                .content(getItems().stream()
+                        .map(item -> new ItemButton(
+                                item,
+                                event -> event.getWhoClicked().sendMessage(item.toString())))
                         .collect(Collectors.toList()))
                 .build();
     }

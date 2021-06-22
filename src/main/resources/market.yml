@@ -1,0 +1,11 @@
+market:
+  categories:
+    - name: 'swords'
+      filters:
+        - type: '*SWORD*'
+    - name: 'pickaxes'
+      filters:
+        - type: '*PICKAXE*'
+    - name: 'axes'
+      filters:
+        - type: '*_AXE'

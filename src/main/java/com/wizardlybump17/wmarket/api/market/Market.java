@@ -1,4 +1,4 @@
-package com.wizardlybump17.market.api.market;
+package com.wizardlybump17.wmarket.api.market;
 
 import com.wizardlybump17.wlib.inventory.item.ItemButton;
 import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventory;
@@ -9,39 +9,26 @@ import lombok.Data;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
-public class MarketCategory {
+public class Market {
 
-    private final Category category;
-    private final List<ItemStack> items;
+    private final Set<MarketCategory> categories;
 
     private PaginatedInventory inventory;
 
-    public List<ItemStack> getItems() {
-        return new ArrayList<>(items);
+    public MarketCategory publish(ItemStack item) {
+        for (MarketCategory marketCategory : categories)
+            if (marketCategory.addItem(item))
+                return marketCategory;
+        return null;
     }
 
-    public void addItem(ItemStack item) {
-        items.add(item);
-        updateInventory();
-    }
-
-    public void removeItem(ItemStack item) {
-        items.remove(item);
-        updateInventory();
-    }
-
-    public boolean hasItem(ItemStack item) {
-        return items.contains(item);
-    }
-
-    void updateInventory() {
+    public void updateInventory() {
         inventory = new PaginatedInventoryBuilder()
-                .title(category.getName())
+                .title("Market")
                 .shape("#########" +
                         "#xxxxxxx#" +
                         "#xxxxxxx#" +
@@ -67,10 +54,17 @@ public class MarketCategory {
                                 .displayName("§aPrevious page")
                                 .build(),
                         '#'))
-                .content(getItems().stream()
-                        .map(item -> new ItemButton(
-                                item,
-                                event -> event.getWhoClicked().sendMessage(item.toString())))
+                .content(categories.stream()
+                        .map(category -> new ItemButton(
+                                Item.builder()
+                                        .type(Material.CHEST)
+                                        .displayName("§a" + category.getCategory().getName())
+                                        .lore("§7" + category.getItems().size() + " items")
+                                        .build(),
+                                event -> {
+                                    if (category.getInventory() != null)
+                                        category.getInventory().show(event.getWhoClicked(), 0);
+                                }))
                         .collect(Collectors.toList()))
                 .build();
     }
