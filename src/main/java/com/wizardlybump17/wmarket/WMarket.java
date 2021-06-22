@@ -46,6 +46,7 @@ public class WMarket extends JavaPlugin {
         }
 
         market = new Market(categories);
+        categories.forEach(category -> category.setMarket(market));
         market.updateInventory();
     }
 

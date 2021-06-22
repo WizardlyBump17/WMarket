@@ -21,8 +21,10 @@ public class Market {
 
     public MarketCategory publish(ItemStack item) {
         for (MarketCategory marketCategory : categories)
-            if (marketCategory.addItem(item))
+            if (marketCategory.addItem(item)) {
+                updateInventory();
                 return marketCategory;
+            }
         return null;
     }
 

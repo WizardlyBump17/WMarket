@@ -7,6 +7,8 @@ import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventoryBuilder;
 import com.wizardlybump17.wlib.item.Item;
 import com.wizardlybump17.wlib.item.WMaterial;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,10 +17,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@ToString
+@EqualsAndHashCode
 public class MarketCategory {
 
     private final Category category;
     private final List<ItemStack> items;
+    @ToString.Exclude @EqualsAndHashCode.Exclude
+    private Market market;
+
+    public void setMarket(Market market) {
+        if (this.market == null)
+            this.market = market;
+    }
 
     private PaginatedInventory inventory;
 
@@ -52,7 +63,7 @@ public class MarketCategory {
                         "#xxxxxxx#" +
                         "#xxxxxxx#" +
                         "#xxxxxxx#" +
-                        "<#######>")
+                        "<###@###>")
                 .shapeReplacement(
                         '#',
                         new ItemButton(Item.builder()
@@ -60,6 +71,13 @@ public class MarketCategory {
                                 .durability((short) 15)
                                 .displayName(" ")
                                 .build()))
+                .shapeReplacement(
+                        '@',
+                        new ItemButton(Item.builder()
+                                .type(Material.BARRIER)
+                                .displayName("§aBack")
+                                .build(),
+                                event -> market.getInventory().show(event.getWhoClicked(), 0)))
                 .nextPage(new PaginatedInventoryBuilder.InventoryNavigator(
                         Item.builder()
                                 .type(Material.ARROW)
