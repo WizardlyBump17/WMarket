@@ -1,6 +1,6 @@
 name: WMarket
 main: com.wizardlybump17.wmarket.WMarket
-version: ${project.version}
+version: '${version}'
 author: WizardlyBump17
 commands:
   market:

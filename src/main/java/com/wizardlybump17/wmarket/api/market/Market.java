@@ -1,10 +1,11 @@
 package com.wizardlybump17.wmarket.api.market;
 
 import com.wizardlybump17.wlib.inventory.item.ItemButton;
+import com.wizardlybump17.wlib.inventory.paginated.InventoryNavigator;
 import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventory;
 import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventoryBuilder;
 import com.wizardlybump17.wlib.item.Item;
-import com.wizardlybump17.wlib.item.WMaterial;
+import com.wizardlybump17.wlib.adapter.WMaterial;
 import com.wizardlybump17.wlib.util.ListUtil;
 import lombok.Data;
 import org.bukkit.Material;
@@ -45,13 +46,13 @@ public class Market {
                                 .durability((short) 15)
                                 .displayName(" ")
                                 .build()))
-                .nextPage(new PaginatedInventoryBuilder.InventoryNavigator(
+                .nextPage(new InventoryNavigator(
                         Item.builder()
                                 .type(Material.ARROW)
                                 .displayName("§aNext page")
                                 .build(),
                         '#'))
-                .previousPage(new PaginatedInventoryBuilder.InventoryNavigator(
+                .previousPage(new InventoryNavigator(
                         Item.builder()
                                 .type(Material.ARROW)
                                 .displayName("§aPrevious page")
