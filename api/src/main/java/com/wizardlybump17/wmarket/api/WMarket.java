@@ -14,7 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
-public class WMarket extends JavaPlugin {
+public abstract class WMarket extends JavaPlugin {
 
     private Market market;
 
@@ -25,6 +25,7 @@ public class WMarket extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        initConfigurations();
         loadMarket();
     }
 
@@ -37,6 +38,8 @@ public class WMarket extends JavaPlugin {
         market = new Market(categories);
         categories.forEach(category -> category.setMarket(market));
     }
+
+    protected abstract void initConfigurations();
 
     public static WMarket getInstance() {
         return getPlugin(WMarket.class);
