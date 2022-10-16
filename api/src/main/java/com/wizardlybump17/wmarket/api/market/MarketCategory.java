@@ -1,12 +1,10 @@
 package com.wizardlybump17.wmarket.api.market;
 
-import com.wizardlybump17.wlib.inventory.paginated.InventoryNavigator;
-import com.wizardlybump17.wmarket.api.filter.Filter;
+import com.wizardlybump17.wlib.inventory.item.InventoryNavigator;
 import com.wizardlybump17.wlib.inventory.item.ItemButton;
 import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventory;
 import com.wizardlybump17.wlib.inventory.paginated.PaginatedInventoryBuilder;
-import com.wizardlybump17.wlib.item.Item;
-import com.wizardlybump17.wlib.adapter.WMaterial;
+import com.wizardlybump17.wlib.item.ItemBuilder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -15,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @ToString
@@ -24,7 +21,8 @@ public class MarketCategory {
 
     private final Category category;
     private final List<ItemStack> items;
-    @ToString.Exclude @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Market market;
 
     public void setMarket(Market market) {
@@ -32,32 +30,28 @@ public class MarketCategory {
             this.market = market;
     }
 
-    private PaginatedInventory inventory;
-
     public List<ItemStack> getItems() {
         return new ArrayList<>(items);
     }
 
     public boolean addItem(ItemStack item) {
-        for (Filter filter : category.getFilters())
-            if (!filter.accept(item))
-                return false;
+        if (!category.getItemFilter().accept(item))
+            return false;
+
         items.add(item);
-        updateInventory();
         return true;
     }
 
     public void removeItem(ItemStack item) {
         items.remove(item);
-        updateInventory();
     }
 
     public boolean hasItem(ItemStack item) {
         return items.contains(item);
     }
 
-    private void updateInventory() {
-        inventory = new PaginatedInventoryBuilder()
+    public PaginatedInventory getInventory() {
+        return PaginatedInventoryBuilder.create()
                 .title(category.getName())
                 .shape("#########" +
                         "#xxxxxxx#" +
@@ -67,35 +61,24 @@ public class MarketCategory {
                         "<###@###>")
                 .shapeReplacement(
                         '#',
-                        new ItemButton(Item.builder()
-                                .type(WMaterial.STAINED_GLASS_PANE)
-                                .durability((short) 15)
+                        new ItemButton(new ItemBuilder()
+                                .type(Material.BLACK_STAINED_GLASS_PANE)
                                 .displayName(" ")
                                 .build()))
                 .shapeReplacement(
                         '@',
-                        new ItemButton(Item.builder()
+                        new ItemButton(new ItemBuilder()
                                 .type(Material.BARRIER)
                                 .displayName("§aBack")
                                 .build(),
-                                event -> market.getInventory().show(event.getWhoClicked(), 0)))
-                .nextPage(new InventoryNavigator(
-                        Item.builder()
-                                .type(Material.ARROW)
-                                .displayName("§aNext page")
-                                .build(),
-                        '#'))
-                .previousPage(new InventoryNavigator(
-                        Item.builder()
-                                .type(Material.ARROW)
-                                .displayName("§aPrevious page")
-                                .build(),
-                        '#'))
+                                (event, inventory) -> market.getInventory().show(event.getWhoClicked(), 0)))
+                .nextPage(InventoryNavigator.NEXT_PAGE)
+                .previousPage(InventoryNavigator.PREVIOUS_PAGE)
                 .content(getItems().stream()
                         .map(item -> new ItemButton(
                                 item,
-                                event -> event.getWhoClicked().sendMessage(item.toString())))
-                        .collect(Collectors.toList()))
+                                (event, inventory) -> event.getWhoClicked().sendMessage(item.toString())))
+                        .toList())
                 .build();
     }
 }

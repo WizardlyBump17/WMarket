@@ -3,3 +3,6 @@
  */
 
 rootProject.name = 'WMarket'
+include 'api'
+include 'spigot'
+

@@ -1,44 +1,25 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-apply plugin: 'java'
-apply plugin: 'com.github.johnrengelman.shadow'
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
-sourceCompatibility = '1.8'
+    targetCompatibility = '17'
+    sourceCompatibility = '17'
 
-tasks {
-    compileJava {
-        options.encoding = 'UTF-8'
+    group = 'com.wizardlybump17.wmarket'
+    version = '1.0.0'
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
     }
-}
 
-dependencies {
-    compileOnly(
-            'org.projectlombok:lombok:1.18.20',
-            'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT',
-            'com.wizardlybump17.wlib:core:1.1.0',
-            'com.wizardlybump17.wlib:adapter:1.1.0',
-            'com.wizardlybump17.wlib:utils:1.1.0',
-            'org.jetbrains:annotations:21.0.1'
-    )
-    annotationProcessor('org.projectlombok:lombok:1.18.20')
-}
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-processResources {
-    filesMatching("**/plugin.yml") {
-        expand "version": project.version
+    tasks {
+        compileJava {
+            options.encoding = 'UTF-8'
+        }
     }
-}
-
-group = 'com.wizardlybump17.wmarket'
-version = '1.0.0'
-
-shadowJar {
-    archiveFileName.set(project.name + '-' + project.version + '.' + archiveExtension.get())
 }

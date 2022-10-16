@@ -1,20 +1,16 @@
 package com.wizardlybump17.wmarket.command;
 
+import com.wizardlybump17.wlib.command.Command;
+import com.wizardlybump17.wlib.command.sender.PlayerSender;
 import com.wizardlybump17.wmarket.WMarket;
 import com.wizardlybump17.wmarket.api.market.MarketCategory;
-import com.wizardlybump17.wlib.command.Command;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-@RequiredArgsConstructor
-public class MarketCommand {
-
-    private final WMarket plugin;
+public record MarketCommand(WMarket plugin) {
 
     @Command(execution = "market")
-    public void market(Player player) {
+    public void market(PlayerSender player) {
         player.sendMessage(
                 "" +
                         "\n   §a/market sell <price>" +
@@ -25,7 +21,7 @@ public class MarketCommand {
     }
 
     @Command(execution = "market sell")
-    public void marketSell(Player player) {
+    public void marketSell(PlayerSender player) {
         player.sendMessage(
                 "" +
                         "\n   §a/market sell <price>" +
@@ -34,9 +30,9 @@ public class MarketCommand {
         );
     }
 
-    @Command(execution = "market sell <price> [player]")
-    public void marketSell(Player player, String priceString, String targetName) {
-        ItemStack item = player.getItemInHand();
+    @Command(execution = "market sell <price>")
+    public void marketSell(PlayerSender player, double price) {
+        ItemStack item = player.getHandle().getInventory().getItemInMainHand();
         if (item.getType() == Material.AIR) {
             player.sendMessage("§cYou need to hold the item to sell it!");
             return;
@@ -48,12 +44,12 @@ public class MarketCommand {
             return;
         }
 
-        player.sendMessage("§aYour item has been placed in the " + category.getCategory().getName() + " category with the price " + priceString + "!");
-        player.setItemInHand(null);
+        player.sendMessage("§aYour item has been placed in the " + category.getCategory().getName() + " category with the price " + price + "!");
+        player.getHandle().getInventory().setItemInMainHand(null);
     }
 
     @Command(execution = "market see")
-    public void marketSee(Player player) {
-        plugin.getMarket().getInventory().show(player, 0);
+    public void marketSee(PlayerSender player) {
+        plugin.getMarket().getInventory().show(player.getHandle());
     }
 }
