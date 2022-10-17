@@ -10,8 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Getter
 public abstract class WMarket extends JavaPlugin {
@@ -30,13 +30,18 @@ public abstract class WMarket extends JavaPlugin {
     }
 
     private void loadMarket() {
-        Set<MarketCategory> categories = new LinkedHashSet<>();
-
-        for (Object object : Config.load("categories.yml", this).getList("categories", Collections.emptyList()))
-            categories.add(new MarketCategory((Category) object, new ArrayList<>()));
-
+        Map<String, MarketCategory> categories = new LinkedHashMap<>();
         market = new Market(categories);
-        categories.forEach(category -> category.setMarket(market));
+
+        for (Object object : Config.load("categories.yml", this).getList("categories", Collections.emptyList())) {
+            Category category = (Category) object;
+            MarketCategory marketCategory = new MarketCategory(category, new ArrayList<>());
+            marketCategory.setMarket(market);
+            categories.put(category.getName().toLowerCase(), marketCategory);
+        }
+
+        for (MarketCategory category : categories.values())
+            category.setMarket(market);
     }
 
     protected abstract void initConfigurations();

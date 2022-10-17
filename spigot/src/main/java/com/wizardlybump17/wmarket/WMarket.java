@@ -28,6 +28,7 @@ public class WMarket extends com.wizardlybump17.wmarket.api.WMarket {
         ConfigHolderFactoryRegistry.getInstance().put(com.wizardlybump17.wmarket.api.WMarket.class, factory);
 
         ConfigHandlerRegistry.getInstance().register(Configuration.class);
+        ConfigHandlerRegistry.getInstance().register(Configuration.Market.class);
 
         ConfigHandlerRegistry.getInstance().register(MarketCommand.class);
     }
